@@ -89,5 +89,21 @@ export class AppRoutingModule { }
 
 ### Connet to the TMDB api
 * lets setup a search input in home.component.html
-* visit tmdb create a free account and ask for an api key
-* using angular http module make an api call for movies from the server
+* visit [The Movie DB](https://www.themoviedb.org/) create a free account and ask for an api key.
+* Click on the profile icon top right and click on settings
+* Find the API link and submit your app details to recieve an api key.
+* App details: Application Name: Movie Search, Application URL localhost:4000, Application Summary: an app that will search for movies that are related to the search term entered into the app input and display them in the ui.
+* add key to the server.ts file in your app. `WARNING: Do not commit your api key to github. if you do it could be found and used by another party.`
+
+### send request to server with http module
+* using angular http module send search term to server.ts
+* make an api folder and api.ts file
+* send search term to api.ts and send the api request to tmdb
+* send response (data) back to the client (front-end)
+* display the movie data in the ui
+
+### deploy app live to heroku
+* sign up for a heroku account
+* configure package.json for heroku
+* add `process.env.TOKEN` to server.ts and store api key in heroku
+* heroku login, git push heroku master
