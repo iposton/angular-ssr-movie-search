@@ -17,8 +17,9 @@ steps
 * create new project with angular cli
 * write this command: `ng new movie-search --skip-git`
 * it will ask this answer yes then choose SCSS
-`Would you like to add Angular routing?` Yes <br>
+`Would you like to add Angular routing? Yes` <br>
 `Which stylesheet format would you like to use? SCSS`
+* make sure the `.gitignore` is ignoring /dist and anything else you would like to `git` ignore.
 
 ### make a github repo to track progress
 * login / click new repository / Create a new repository
@@ -87,6 +88,16 @@ export class AppRoutingModule { }
 
 ```
 
+
+### Send Request to Server with Angular HttpClient Module
+* add `FormControl` from `angular/forms` and set up input
+* set up `async observerable` to fire onInit.
+* each time there is text entered into the input fire a request for data.
+* create a data service file to handle each search api request. write this angular cli command in terminal: `ng g s services/data`
+* using angular http module send search term to server.ts
+* make an api folder and api.ts file
+* import the api into the `server.ts` file. `import { api } from './api/api'`
+
 ### Connet to the TMDB api
 * lets setup a search input in home.component.html
 * visit [The Movie DB](https://www.themoviedb.org/) create a free account and ask for an api key.
@@ -94,14 +105,6 @@ export class AppRoutingModule { }
 * Find the API link and submit your app details to recieve an api key.
 * App details: Application Name: Movie Search, Application URL localhost:4000, Application Summary: an app that will search for movies that are related to the search term entered into the app input and display them in the ui.
 * add key to the server.ts file in your app. `WARNING: Do not commit your api key to github. if you do it could be found and used by another party.`
-
-### send request to server with http module
-* add `FormControl` from `angular/forms` and set up input
-* set up `async observerable` to fire onInit.
-* each time there is text entered into the input fire a request for data.
-* create a data service file to handle each search api request. write this angular cli command in terminal: `ng g s services/data`
-* using angular http module send search term to server.ts
-* make an api folder and api.ts file
 * send search term to api.ts and send the api request to tmdb
 * send response (data) back to the client (front-end)
 * display the movie data in the ui

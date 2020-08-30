@@ -7,12 +7,14 @@ import { join } from 'path';
 import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
 import { existsSync } from 'fs';
+import { api } from './api/api';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
   const distFolder = join(process.cwd(), 'dist/browser');
   const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
+  const apiKey = 'TMDB API KEY';
 
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
   server.engine('html', ngExpressEngine({
@@ -25,6 +27,14 @@ export function app(): express.Express {
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => { });
   // Serve static files from /browser
+
+  server.post('/search', async (req, res) => {
+    let searchquery = req.body.query;
+    let encsearchquery = encodeURIComponent(searchquery);
+    const data =  await api.data.search(encsearchquery, apiKey);
+    res.status(200).json(data);
+  })
+
   server.get('*.*', express.static(distFolder, {
     maxAge: '1y'
   }));

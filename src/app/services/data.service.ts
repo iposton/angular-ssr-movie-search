@@ -14,7 +14,7 @@ export class DataService {
   searchTrending(item: string): Observable<any> {
     let searchterm = `query=${item}`;
     try {
-      this.result = this.http.post('/searchtrending', searchterm, {headers});
+      this.result = this.http.post('/search', searchterm, {headers});
       return this.result;
     } catch (e) {
       console.log(e, 'error')
