@@ -96,6 +96,10 @@ export class AppRoutingModule { }
 * add key to the server.ts file in your app. `WARNING: Do not commit your api key to github. if you do it could be found and used by another party.`
 
 ### send request to server with http module
+* add `FormControl` from `angular/forms` and set up input
+* set up `async observerable` to fire onInit.
+* each time there is text entered into the input fire a request for data.
+* create a data service file to handle each search api request. write this angular cli command in terminal: `ng g s services/data`
 * using angular http module send search term to server.ts
 * make an api folder and api.ts file
 * send search term to api.ts and send the api request to tmdb

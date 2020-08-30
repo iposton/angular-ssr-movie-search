@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from "@angular/forms";
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { DataService } from '../../services/data.service';
 
 @Component({
   selector: 'app-home',
@@ -6,10 +10,23 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  public loading: boolean = false;
+  public results: Observable<any>;
+  public searchField: FormControl;
 
-  constructor() { }
+  constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
+    this.searchField = new FormControl();
+    this.results = this.searchField.valueChanges.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      tap(_ => { 
+        this.loading = true; 
+      }),
+      switchMap(term => this.dataService.searchTrending(term)),
+      tap(_ => (this.loading = false))
+    );
   }
 
 }

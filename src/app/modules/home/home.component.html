@@ -1,3 +1,4 @@
 <div class="row">
-  <input type="search" class="form-control" placeholder="search">
+  <input type="search" class="form-control" placeholder="search" [formControl]="searchField">
+  <span class="rec-title">{{ (results | async)?.length ? 'Results' : 'Search' }}</span>
 </div>
