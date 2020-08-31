@@ -1,4 +1,21 @@
+<div class="center-header">
+    <h1>Movie Search</h1>
+    <i>* This product uses the TMDb API but is not endorsed or certified by TMDb.</i>
+</div>
+
 <div class="row">
   <input type="search" class="form-control" placeholder="search" [formControl]="searchField">
-  <span class="rec-title">{{ (results | async)?.length ? 'Results' : 'Search' }}</span>
+  <span class="search-title">{{ (results | async)?.length ? 'Results' : 'Search' }}</span>
 </div>
+<div class="row wrapper">
+  <div class="no-res" *ngIf="(results | async)?.length === 0">Nothing matches this search.</div>
+  <div [ngClass]="{'dn': item?.poster_path == null}" class="col" *ngFor="let item of results | async">
+      <span class="item">
+          <span class="bg" [ngStyle]="{'background': 'linear-gradient(-225deg, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 80%), url(https://image.tmdb.org/t/p/w440_and_h660_face'+ item?.poster_path +')' }">
+           <div class="item-row">
+           
+            </div>
+          </span>
+      </span>
+  </div>
+</div> 
