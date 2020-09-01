@@ -108,9 +108,13 @@ export class AppRoutingModule { }
 * send search term to api.ts and send the api request to tmdb
 * send response (data) back to the client (front-end)
 * display the movie data in the ui
+* style the movie results for big and mobile screens.
 
 ### deploy app live to heroku
+* add build commands to `package.json` for heroku `"start:heroku": "node dist/server/main.js", "heroku-postbuild": "npm run build:ssr"`
+* add Procfile to root with this line `web: npm run start:heroku`
 * sign up for a heroku account
 * configure package.json for heroku
-* add `process.env.TOKEN` to server.ts and store api key in heroku
+* replace token with `process.env.TOKEN` to server.ts before pushing to github and heroku
+* store the tmdb api key in heroku config vars with this command
 * heroku login, git push heroku master

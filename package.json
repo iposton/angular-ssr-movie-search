@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
+    "start:heroku": "node dist/server/main.js",
+    "heroku-postbuild": "npm run build:ssr",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
