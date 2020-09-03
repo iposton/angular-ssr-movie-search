@@ -383,7 +383,8 @@ On `line 7` add `"heroku-postbuild": "npm run build:ssr"` <br>
 Write command: `touch Procfile` add this line `web: npm run start:heroku` to the file.
 * Replace the api token with `process.env.TOKEN` to `server.ts` before pushing to github and heroku. <br>
 On `line 20` add `const apiKey = process.env.TOKEN;`
-* Push to github.
+* Commit and then push to github. <br>
+`git commit -am "make a commit."` then `git push`
 * With `Heroku CLI` login to heroku from terminal run: `heroku login`.
 * Create a heroku app write this command: `heroku create angular-movie-search` and `git push heroku master`.
 * Store the TMDB api key to the heroku app setting's config vars. The `key: TOKEN` and `value: TMDB api key`.
