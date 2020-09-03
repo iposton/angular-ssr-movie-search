@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
       tap(_ => { 
         this.loading = true; 
       }),
-      switchMap(term => this.dataService.searchTrending(term)),
+      switchMap(term => this.dataService.search(term)),
       tap(_ => (this.loading = false))
     );
   }

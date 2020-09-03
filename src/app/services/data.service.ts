@@ -11,7 +11,7 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
-  searchTrending(item: string): Observable<any> {
+  search(item: string): Observable<any> {
     let searchterm = `query=${item}`;
     try {
       this.result = this.http.post('/search', searchterm, {headers});
