@@ -1,4 +1,4 @@
-# Angular 10 Movie Search (ssr ngUniversal) with TMDB API - <a href="https://angular10-movie-search.herokuapp.com/">Demo</a>
+# Angular 10 Movie Search (ssr ngUniversal), TMDB API - <a href="https://angular10-movie-search.herokuapp.com/" target="_blank">Demo</a>
 
 ### Description
 This [application](https://nhl-starting-goalies-angular.herokuapp.com/) is made with Angular (version 10.0.4). This is a server-side rendering app that uses `node.js` and `express` and it searches for movie titles. This single page app is hosted for free on Heroku (cloud application platform). The data is sourced through the [The Movie Db API](https://www.themoviedb.org/documentation/api?language=en-US).
@@ -9,8 +9,9 @@ This [application](https://nhl-starting-goalies-angular.herokuapp.com/) is made 
 * Node.js 14.4.0
 * Angular CLI: 10.0.3
 * NPM 6.14.8
+* Git 2.15.2
 
-<i>Automatically installed locally by angular cli</i>
+<i>Automatically installed locally by Angular cli</i>
 * rxjs                              6.5.5
 * typescript                        3.9.7
 * webpack                           4.43.0
@@ -36,9 +37,9 @@ The advantage of making this app server-side rendered is that the application ca
 * [How to make angular app ssr](https://angular.io/guide/universal)
 * In the terminal write this command: `ng add @nguniversal/express-engine`
 * This will create a `server.ts` file to serve and handle the data for this app.
-* In `package.json` change line 12 to `"serve:ssr": "node dist/server/main.js",`
-* Then in `angular.json` change line 20 to `"outputPath": "dist/browser",` and line 129 to `"outputPath": "dist/server",`
-* In `server.ts` change line 14 to `const distFolder = join(process.cwd(), 'dist/browser');`
+* In `package.json` change `line 12` to `"serve:ssr": "node dist/server/main.js",`
+* Then in `angular.json` change `line 20` to `"outputPath": "dist/browser",` and `line 129` to `"outputPath": "dist/server",`
+* In `server.ts` change `line 14` to `const distFolder = join(process.cwd(), 'dist/browser');`
 
 ### Build a prod version of the ssr app and serve the app
 * Run command: `npm run build:ssr`
@@ -52,8 +53,8 @@ The advantage of making this app server-side rendered is that the application ca
 
 ```ts
 
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+//app-routing.module.ts
+
 import { HomeComponent } from './modules/home/home.component';
 
 const routes: Routes = [
@@ -67,28 +68,19 @@ const routes: Routes = [
     }  
    ];
 
-@NgModule({
-  imports: [RouterModule.forRoot(routes, {
-    initialNavigation: 'enabled'
-})],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
 
 ```
 
 * Replace `app.component.html` placeholder html content with this below. 
 
 ```html
-
-//app.component.html
+<!-- app.component.html -->
 
 <div class="container">
   <router-outlet></router-outlet>
 </div>
 
 ```
-
 
 ### Send Request to Server with Angular HttpClient Module
 For this app we will need to add the `HttpClinetModule`, `ReactiveFormsModule` and `FormsModule` to the `app.module.ts` file and add it to `imports`. This will make this modules available through out the entire app. The http module will allow us to make calls to the server. The `ReactiveFormsModule` will help us use `FormControl` on the html input and when the value changes (text in the search input) an api request will be sent to the server.
@@ -106,7 +98,7 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 * Set up an `async Observable` and a `function` to fire onInit.
 
 ```html
-//home.component.html
+<!-- home.component.html -->
 
 <div class="row">
   <input type="search" class="form-control" placeholder="search" [formControl]="searchField">
@@ -121,7 +113,12 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from "@angular/forms";
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { 
+  debounceTime, 
+  distinctUntilChanged, 
+  tap, 
+  switchMap 
+} from 'rxjs/operators';
 import { DataService } from '../../services/data.service';
 
 @Component({
@@ -153,8 +150,8 @@ export class HomeComponent implements OnInit {
 
 ```
 
-* Create a data service file to handle each search api request. Write this `angular cli` command in the terminal: `ng g s services/data`
-* In this service use angular's http module to send the search term to `server.ts`.
+* Create a data service file to handle each search api request. Write this `Angular cli` command in the terminal: `ng g s services/data`
+* In this service use Angular's http module to send the search term to `server.ts`.
 
 ```ts
 //data.service.ts
@@ -185,11 +182,11 @@ export class DataService {
 
 ```
 
-In `server.ts` create a function to handle the request from the client. Then send the request to the tmdb endpoint.
+In `server.ts` create a function to handle the request from the client. Then send the request to the tmdb endpoint. `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&page=1&include_adult=false&query=${term}`
 
 ```ts
 
-//server.ts
+//server.ts line 35-40
 
   server.post('/search', async (req, res) => {
     let searchquery = req.body.query;
@@ -200,11 +197,11 @@ In `server.ts` create a function to handle the request from the client. Then sen
 
 ```
 
-* In the root of this app make an api folder and api.ts file.
+* In the root of this app make an `api` folder and `api.ts` file.
 * In the terminal type: `mkdir api` then `cd api` then `touch api.ts` to set up an api directory.
-* Import the `api` into the `server.ts` file. `import { api } from './api/api'`.
+* Import the `api` file into the `server.ts` file. `import { api } from './api/api'`.
 
-In the future if you would want to add different requests for tmdb you can add them to `api.ts` to keep the `server.ts` file less cluttered.
+In the future if you would want to add different requests to the `TMDB api` you can add them to `api.ts` to keep the `server.ts` file less cluttered.
 
 ```ts
 //api.ts
@@ -229,21 +226,50 @@ export const api = {data: methods};
 
 ```
 
-I am using `request` library to handle the api request and parse the response. In TypeScript I can use Promises to wait for the response to be ready to avoid throwing an error.
+I am using the `request` library to handle the api request and parse the response. In TypeScript I can use Promises to wait for the response to be ready to avoid throwing an error.
 
 ### Connet to the TMDB api
 * Visit [The Movie DB](https://www.themoviedb.org/) create a free account and ask for an api key.
-* Click on the profile icon top right and click on settings
-* Find the API link and submit your app details to receive an api key.
-* App details: Application Name: Movie Search, Application URL localhost:4000, Application Summary: an app that will search for movies that are related to the search term entered into the app input and display them in the ui.
-* Add the api key to the `server.ts` file in your app. `WARNING: Do not commit your api key to github. If you do it could be found and used by another party.`
+* Click on the profile icon top right and click on `settings`.
+* Find the `API` link and submit your app details to receive an api key.
+* Enter App Details. <br>
+`Application Name: Movie Search` <br>
+`Application URL: localhost:4000` <br>
+`Application Summary: an app that will search for movies that are related to the search term entered into the app input and display them in the ui.`
+* Add the api key to the `server.ts` file in your app. <br> `WARNING: Do not commit your api key to github. If you do it could be found and used by another party.`
+
+```ts
+//server.ts
+import 'zone.js/dist/zone-node';
+
+import { ngExpressEngine } from '@nguniversal/express-engine';
+import * as express from 'express';
+import { join } from 'path';
+import { enableProdMode } from '@angular/core';
+import { AppServerModule } from './src/main.server';
+import { APP_BASE_HREF } from '@angular/common';
+import { existsSync } from 'fs';
+import { api } from './api/api';
+const bodyParser = require('body-parser');
+
+enableProdMode();
+
+// The Express app is exported so that it can be used by serverless Functions.
+export function app(): express.Express {
+  const server = express();
+  const distFolder = join(process.cwd(), 'dist/browser');
+  const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
+  const apiKey = 'TMDB api key';
+  server.use(bodyParser.urlencoded({extended: true}));
+
+  ...
+```
 
 ### Display data in the UI
 When we get the data response back from the TMDB endpoint it's sent back to the client (front-end). The `home.component.html` needs to be set up to display an `async Observable`.
 
 ```html
-
-//home.component.html
+<!-- home.component.html -->
 
 <div class="center-header">
     <h1>Movie Search</h1>
@@ -266,16 +292,100 @@ When we get the data response back from the TMDB endpoint it's sent back to the 
 
 ```
 
-There is a few things to unpack in this ui. I am using a ternary condtion inside an angular interpolated bracket to show the text 'Search' or 'Results' if there is data to show `{{ (results | async)?.length ? 'Results' : 'Search' }}`. I am using the `[ngClass]` directive which is apart of the angular framework. I am adding the class `dn` (display: none) if the data `poster_path` is `null` to avoid blank items. I am also using the `[ngStyle]` directive to add the background image dynamically.
+There is a few things to unpack in this ui. I am using a ternary condtion inside an Angular interpolation bracket to display the text "Search" or "Results" depeding on if there is data to show. <br>
+`{{ (results | async)?.length ? 'Results' : 'Search' }}` <br> <br>
+I am using the `[ngClass]` directive which is apart of the Angular framework. I am adding the class `dn` if the data `poster_path` is `null` and then in `styles.scss` add `.dn {display: none;}` to avoid blank movie items. I am also using the `[ngStyle]` directive to add the background image of each movie item's poster image dynamically.
+
+### Add CSS styles
+I've added some basic css styles to show movie results in a flex row column layout. This will handle smaller mobile screens as well. With a `scss` file you can write nested css like shown below. [Full SCSS file for this Movie Search App](https://github.com/iposton/angular-ssr-movie-search/blob/master/src/styles.scss)
+
+```scss
+//styles.scss
+html, 
+body { 
+  height: 100%;
+  font-family: Arial, sans-serif; 
+  margin: 0;
+  background-color: #303030;
+}
+
+.container {
+  color: #fff;
+  min-height: 100%;
+  margin-bottom: -50px;
+  margin: 0 auto; 
+  max-width: 1380px;
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 13%;
+      width: 100%;
+      color: #fff;
+      margin-bottom: 5px;
+      position: relative;
+
+      .item {
+        .bg {
+          background-size: cover!important;
+          background-repeat: no-repeat !important;
+          background-position: center !important;
+          position: relative;
+          height: 250px;
+          display: block;
+        }
+      }
+    }
+  
+    .col.dn {
+      display: none;
+    }
+
+  }
+
+  .row.wrapper {
+    max-width: 1200px;
+    margin: 0 auto
+  }
+
+}
+
+@media (max-width: 900px) { 
+  .container .row .col {
+    flex: 0 0 20%;
+  }
+}
+
+@media (max-width: 500px) { 
+  .container .row .col {
+    flex: 0 0 33%;
+  }
+}
+
+```
 
 ### Deploy app live to heroku
 If you would like to host this app for free, visit it anytime that you want to and share it with others then follow the steps below.
 
 * Sign up for a free heroku account.
-* Add build commands to `package.json` for heroku `"start:heroku": "node dist/server/main.js", "heroku-postbuild": "npm run build:ssr"`
-* Add a `Procfile` to the root of this app. write command: `touch Procfile` add this line `web: npm run start:heroku` to the file.
-* configure package.json for heroku
-* Replace the api token with `process.env.TOKEN` to `server.ts` before pushing to github and heroku
-* Push to github and login to heroku from terminal `heroku login`.
-* Create a heroku app write this command: `heroku create angular10-movie-search` and `git push heroku master`
-* Store the TMDB api key your heroku app settings config vars. The key: TOKEN and value: TMDB api key.
+* Install the [heroku cli](https://devcenter.heroku.com/articles/heroku-cli).
+* Add build commands to `package.json` for heroku <br>
+On `line 6` add `"start:heroku": "node dist/server/main.js", <br>
+On `line 7` add `"heroku-postbuild": "npm run build:ssr"` <br>
+* Add a `Procfile` to the root of this app. <br>
+Write command: `touch Procfile` add this line `web: npm run start:heroku` to the file.
+* Replace the api token with `process.env.TOKEN` to `server.ts` before pushing to github and heroku. <br>
+On `line 20` add `const apiKey = process.env.TOKEN;`
+* Push to github.
+* With `Heroku CLI` login to heroku from terminal run: `heroku login`.
+* Create a heroku app write this command: `heroku create angular-movie-search` and `git push heroku master`.
+* Store the TMDB api key to the heroku app setting's config vars. The `key: TOKEN` and `value: TMDB api key`.
+
+If the heroku app name that you created is taken make up a unique name that is available. I will add a part 2 for this tutrial so we can show some more movie data and make the page interactive by loading movie trailers. Thank you for reading.
