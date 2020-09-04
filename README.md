@@ -1,7 +1,7 @@
 # Angular 10 Movie Search (ssr ngUniversal), TMDB API - <a href="https://angular10-movie-search.herokuapp.com/" target="_blank">Demo</a>
 
 ### Description
-This [application](https://nhl-starting-goalies-angular.herokuapp.com/) is made with Angular (version 10.0.4). This is a server-side rendering app that uses `node.js` and `express` and it searches for movie titles. This single page app is hosted for free on Heroku (cloud application platform). The data is sourced through the [The Movie Db API](https://www.themoviedb.org/documentation/api?language=en-US).
+This [application](https://nhl-starting-goalies-angular.herokuapp.com/) is made with Angular (version 10.0.4). This is a server-side rendering app that uses `node.js` and `express` and it searches for movie titles. This single page app is hosted for free on Heroku (cloud application platform). You will need create a free account with [themoviedb.org](https://www.themoviedb.org/documentation/api?language=en-US) to participate with this tutorial. The instructions of how to procure a TMDB api key are below.
 
 ### Software used in the creation of this app
 * Visual Studio Code 1.38.1
@@ -377,7 +377,7 @@ If you would like to host this app for free, visit it anytime that you want to a
 * Sign up for a free heroku account.
 * Install the [heroku cli](https://devcenter.heroku.com/articles/heroku-cli).
 * Add build commands to `package.json` for heroku <br>
-On `line 6` add `"start:heroku": "node dist/server/main.js", <br>
+On `line 6` add `"start:heroku": "node dist/server/main.js",` <br>
 On `line 7` add `"heroku-postbuild": "npm run build:ssr"` <br>
 * Add a `Procfile` to the root of this app. <br>
 Write command: `touch Procfile` add this line `web: npm run start:heroku` to the file.
@@ -386,7 +386,9 @@ On `line 20` add `const apiKey = process.env.TOKEN;`
 * Commit and then push to github. <br>
 `git commit -am "make a commit."` then `git push`
 * With `Heroku CLI` login to heroku from terminal run: `heroku login`.
-* Create a heroku app write this command: `heroku create angular-movie-search` and `git push heroku master`.
-* Store the TMDB api key to the heroku app setting's config vars. The `key: TOKEN` and `value: TMDB api key`.
+* Create a heroku app write this command: <br> 
+`heroku create angular-movie-search` and `git push heroku master`.
+* Store the TMDB api key to the heroku app setting's config vars. <br>
+The `key: TOKEN` and `value: TMDB api key`.
 
-If the heroku app name that you created is taken make up a unique name that is available. I will add a part 2 for this tutrial so we can show some more movie data and make the page interactive by loading movie trailers. Thank you for reading.
+If the heroku app name that you created is taken make up a unique name that is available. I will add a part 2 for this tutrial so we can show some more movie data and make the page interactive by loading movie trailers. Thank you for reading. [Full source code](https://github.com/iposton/angular-ssr-movie-search)
