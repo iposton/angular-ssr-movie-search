@@ -12,6 +12,11 @@
   <div [ngClass]="{'dn': item?.poster_path == null}" class="col" *ngFor="let item of results | async">
       <span class="item">
           <span class="bg" [ngStyle]="{'background': 'linear-gradient(-225deg, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 80%), url(https://image.tmdb.org/t/p/w440_and_h660_face'+ item?.poster_path +')' }">
+            <span class="info">
+              <p>
+                <span class="star-rating" *ngFor="let star of rating(item)"> <span>☆</span> </span>
+              </p> 
+            </span>
           </span>
       </span>
   </div>

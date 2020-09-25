@@ -29,4 +29,8 @@ export class HomeComponent implements OnInit {
     );
   }
 
+  public rating(movie) {
+    return Array(Math.round(movie.vote_average)).fill(0);
+  }
+
 }

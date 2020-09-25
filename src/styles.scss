@@ -54,19 +54,47 @@ body {
           position: relative;
           height: 250px;
           display: block;
-  
-          .item-row {
+
+          .info {
+            background-color: rgba(0, 0, 0, 0.0);
+            position: absolute;
+            bottom: 0;
+            color: #fff;
+            font-size: 9px;
+            text-transform: uppercase;
             width: 100%;
-            .item-col {
-              flex-direction: column;
-              flex: 0 0 42%;
-              color: #fff;
-              font-size: 18px;
-              border-radius: 5px;
+            transition: linear .3s;
+
+            p {
+              opacity: 0;
+              transition: linear .3s;
             }
+
+            .star-rating {
+              color: transparent;
+              span:before {
+                content: "\2605";
+                position: absolute;
+                color: gold;
+              }
+            }
+
+          }
+
+        }
+      }
+
+      .item:hover {
+        .info {
+          background-color: rgba(0, 0, 0, 0.5);
+          p {
+            color: #fff;
+            opacity: 1;
+            font-size: 14px;
           }
         }
       }
+
     }
 
     .search-title {

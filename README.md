@@ -392,3 +392,100 @@ On `line 20` add `const apiKey = process.env.TOKEN;`
 The `key: TOKEN` and `value: TMDB api key`.
 
 If the heroku app name that you created is taken make up a unique name that is available. I will add a part 2 for this tutrial so we can show some more movie data and make the page interactive by loading movie trailers. Thank you for reading. [Full source code](https://github.com/iposton/angular-ssr-movie-search)
+
+# Part 2
+
+### Display Movie Details 
+* Show movie rating on hover.
+* Create a trailer link to open a dialog window preview.
+* Genrerate a modal component with angular cli
+
+Let's show some info about the movie when we hover over the movie image. The search payload provides a movie rating score 0 - 10 we can convert that to an array value to show rating as a star rating.
+
+The payload is the data sent back after you make a search request to the api. You will get a max of 20 results per response. The smaller the payload the quicker the data is rendered in the ui. This is an example of the first object of an oserverable sent back by the api.
+
+```json
+
+{
+  "popularity":24.087,
+  "id":670466,
+  "video":false,
+  "vote_count":29,
+  "vote_average":6.8,
+  "title":"My Valentine",
+  "release_date":"2020-02-07",
+  "original_language":"en",
+  "original_title":"My Valentine",
+  "genre_ids":[53,27],
+  "backdrop_path":"/jNN5s79gjy4D3sJNxjQvymXPs9d.jpg",
+  "adult":false,
+  "overview":"A pop singer's artistic identity is stolen by her ex-boyfriend/manager and shamelessly pasted onto his new girlfriend/protégé. Locked together late one night in a concert venue, the three reconcile emotional abuses of the past . . . until things turn violent.","poster_path":"/mkRShxUNjeC8wzhUEJoFUUZ6gS8.jpg"
+}
+
+```
+
+In the first part of this tutorial I used the `poster_path` to display the movie image and now I can use the `vote_average` to show the rating of the movie. I created a function inside the component controller to convert the rating to an array that can then represent the value of the rating number rounded to a whole number and use gold stars to represent the rating when I hover over the movie image.
+
+```html
+
+<span class="star-rating" *ngFor="let star of rating(item)"> 
+  <span>☆</span> 
+</span>
+
+```
+
+```ts
+//home.component.ts
+
+public rating(movie) {
+  return Array(Math.round(movie.vote_average)).fill(0);
+}
+
+```
+
+Then Style the content for the returned value of the rating.
+
+```scss
+//styles.scss
+
+.item .bg .info {
+  background-color: rgba(0, 0, 0, 0.0);
+  position: absolute;
+  bottom: 0;
+  color: #fff;
+  font-size: 9px;
+  text-transform: uppercase;
+  width: 100%;
+  transition: linear .3s;
+
+  p {
+    opacity: 0;
+    transition: linear .3s;
+  }
+
+  .star-rating {
+    color: transparent;
+    span:before {
+      content: "\2605";
+      position: absolute;
+      color: gold;
+    }
+  }
+}
+
+.item .bg .item:hover {
+  .info {
+    background-color: rgba(0, 0, 0, 0.5);
+    p {
+      color: #fff;
+      opacity: 1;
+      font-size: 14px;
+    }
+  }
+}
+
+```
+
+Next I am going to add a link that will send another api request for a movie trailer (preview) and then open a dialog (pop-up modal) to display the trailer with the overview (description) of the movie. 
+
+
