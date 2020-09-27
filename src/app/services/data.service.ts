@@ -20,4 +20,14 @@ export class DataService {
       console.log(e, 'error')
     }
   }
+
+  trailer(item) {
+    let searchterm = `query=${item}`;
+    try {
+      this.result = this.http.post('/trailer', searchterm, {headers});
+      return this.result;
+    } catch (e) {
+      console.log(e, 'error')
+    }
+  }
 }

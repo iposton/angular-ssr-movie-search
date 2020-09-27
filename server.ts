@@ -39,6 +39,13 @@ export function app(): express.Express {
     res.status(200).json(data);
   })
 
+  server.post('/trailer', async (req, res) => {
+    let searchquery = req.body.query;
+    let encsearchquery = encodeURIComponent(searchquery);
+    const data =  await api.data.trailer(encsearchquery, apiKey);
+    res.status(200).json(data);
+  })
+
   server.get('*.*', express.static(distFolder, {
     maxAge: '1y'
   }));

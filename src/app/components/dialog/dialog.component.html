@@ -1,0 +1,29 @@
+<div id="overlay" [ngClass]="{'active': isOpen}" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <span class="header-title" *ngIf="selectedMovie != null">
+        {{selectedMovie?.title ? selectedMovie?.title : selectedMovie?.name}} 
+        ({{selectedMovie?.release_date ? (selectedMovie?.release_date | date: 'y') : selectedMovie?.first_air_date | date: 'y'}})
+      </span>
+      <span class="right" (click)="closeModal()">X</span>
+    </div>
+    <div class="content"> 
+      <div id="top" class="row">
+        <div *ngIf="trailerUrl != null" class="col-trailer">
+          <iframe [src]="trailerUrl" width="560" height="315" frameborder="0" allowfullscreen></iframe>  
+        </div>
+        <div class="col-overview">
+          <span class="star-rating" *ngFor="let star of selectedMovie?.rating"> 
+            <span>☆</span> 
+          </span> 
+          <span> 
+            {{selectedMovie?.rating?.length}}/10 
+          </span> 
+          <br>
+          <hr>
+          <span>{{selectedMovie?.overview}} </span> <br>  
+        </div>
+      </div>     
+    </div>  
+  </div>
+</div>

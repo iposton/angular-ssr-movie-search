@@ -1,3 +1,9 @@
+<app-dialog
+  [isOpen]="isOpen"
+  [selectedMovie]="selectedMovie"
+  [trailerUrl]="trailerUrl"
+  (close)="isOpen = false"></app-dialog>
+
 <div class="center-header">
     <h1>Movie Search</h1>
     <i>* This product uses the TMDb API but is not endorsed or certified by TMDb.</i>
@@ -14,7 +20,8 @@
           <span class="bg" [ngStyle]="{'background': 'linear-gradient(-225deg, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 80%), url(https://image.tmdb.org/t/p/w440_and_h660_face'+ item?.poster_path +')' }">
             <span class="info">
               <p>
-                <span class="star-rating" *ngFor="let star of rating(item)"> <span>☆</span> </span>
+                <span class="star-rating" *ngFor="let star of rating(item)"> <span>☆</span> </span><br>
+                <span class="trailer-link" (click)="openTrailer(item)">Trailer</span>
               </p> 
             </span>
           </span>
