@@ -400,9 +400,9 @@ If the heroku app name that you created is taken make up a unique name that is a
 * Create a trailer link to open a dialog window preview.
 * Genrerate a dialog (modal) component with `angular cli`.
 
-Let's show some info about the movie when we hover over the movie image. The search payload provides a movie rating score 0 - 10 we can convert that to an array value to show rating as a star rating.
+Let's show some info about the movie when we hover over the movie image. The search payload provides a movie rating score 0 - 10. The rating (vote_average) can be converted to an array to show the rating as star icons equal to the length of the array.
 
-The payload is the data sent back after you make a search request to the api. You will get a max of 20 results per response. The smaller the payload the quicker the data is rendered in the ui. This is an example of the first object of an oserverable sent back by the api.
+The `payload` is the data sent back after you make a search request to the `api`. You will get a max of 20 results per response. The smaller the payload the quicker the data is rendered in the ui. This is an example of the first object of an oserverable sent back by the api.
 
 ```json
 
@@ -424,7 +424,7 @@ The payload is the data sent back after you make a search request to the api. Yo
 
 ```
 
-In the first part of this tutorial I used the `poster_path` to display the movie image and now I can use the `vote_average` to show the rating of the movie. I created a function inside the component controller to convert the rating to an array that can then represent the value of the rating number rounded to a whole number and use gold stars to represent the rating when I hover over the movie image.
+In the first part of this tutorial I used the `poster_path` to display the movie image and now I can use the `vote_average` to show the rating of the movie. I created a function inside the component's controller to convert the rating to an array that can then represent the value of the `vote_average` rounded to a whole number and use gold stars to represent the rating when I hover over the movie image.
 
 ```html
 
@@ -435,18 +435,20 @@ In the first part of this tutorial I used the `poster_path` to display the movie
 ```
 
 ```ts
-//home.component.ts
+//home.component.ts line 53
 
 public rating(movie) {
-  return Array(Math.round(movie.vote_average)).fill(0);
+  let rating = Array(Math.round(movie.vote_average)).fill(0);
+  movie.rating = rating;
+  return rating;
 }
 
 ```
 
-Then Style the content for the returned value of the rating.
+Then Style the content for the returned value of the rating so that we only see the stars on hover. [Full SCSS file for the Dialog Component](https://github.com/iposton/angular-ssr-movie-search/blob/master/src/app/components/dialog/dialog.component.scss)
 
 ```scss
-//styles.scss
+//components/dialog/dialog.component.scss
 
 .item .bg .info {
   background-color: rgba(0, 0, 0, 0.0);
@@ -490,12 +492,12 @@ Next I am going to add a link that will send another api request for a movie tra
 
 ### Create a dialog component
 
-When I fetch the movie trialer info from the api I want to embed the media link inside an html `<iframe>`. I want to add a "Trailer" link that will pop open a window to show the trailer. Using `angular cli` I will generate a new dialog component. In the terminal type `ng g c components/dialog --module=app.module.ts`. This command will add the component to `app.module.ts` automatically. 
+When I fetch the movie trialer info from the api I want to embed the media link inside an html `<iframe>`. I want to add a "Trailer" link that will pop open a window to show the trailer when clicked. Using `angular cli` I will generate a new dialog component. In the terminal type `ng g c components/dialog --module=app.module.ts`. This command will add the component to `app.module.ts` automatically. 
 
-To create a pop up window from scratch I need to use a little css and some angular tricks to help me add a special class when the "Trailer" link is clicked. The `dialog component` uses a boolean to add an `active` class to a div show an overlay background with a pop-up postioned in the center. Using angular directive `[ngClass]` if `isOpen` is true add active class to the overlay class. `<div id="overlay" [ngClass]="{'active': isOpen}">` This allows me to hide the overlay `div` until it's active, when I click the trailer link and make isOpen equal true. All I need to do is add some `inputs` to the `app-dialog` component.
+To create a pop-up window from scratch I need to use a little css and some angular tricks to help me add a special `class` when the "Trailer" link is clicked. The `dialog component` uses a `boolean` to add an `active` class to a `div` to show a dark overlay background with a pop-up window positioned in the center of the overlay. Using an angular directive `[ngClass]` if `isOpen` `boolean` is `true` add `active` class to the overlay `id`. `<div id="overlay" [ngClass]="{'active': isOpen}">` This allows me to hide the overlay `div` until it's `active`, when I click the trailer link and make `isOpen` equal true. All I need to do is add some `Inputs` to the `app-dialog` component.
 
 ```html
-<!-- home.component.html -->
+<!-- home.component.html line 1 -->
 
 <app-dialog
   [isOpen]="isOpen"
@@ -538,7 +540,7 @@ export class DialogComponent {
 
 ```
 
-I am using `Input` to inject data from the `home.component` on click and I am using `Output` to emit a function when the dialog is closed on click.
+I am using `Input` to inject data from the `home.component` on click by calling a `function` and I am using `Output` to `emit` a `function` when the dialog is closed. The dialog can be closed by clicking on the X in the top right or by clicking on the overlay. The `closeModal()` function will remove the `active` class, reset all the values and emit a function to reset `isOpen` in the `home.component`.
 
 ```html
 <!-- dialog.component.html -->
@@ -608,20 +610,20 @@ The `selectedMovie` is passed from the `home.component` when the movie link is c
 
 ```
 
-From here the data.service will work as a middle manager to talk with the server / api and send the response back to the client (front-end). The first index in the response with usally be a link to youtube where just about all movie trailers live so I am using a condition to specifically only use youtube trailers and if not don't open the trailer. For fun you can add to this condition if you would like to let the trailer open from another video source.
+From here the `data.service` will work as a middle manager to talk with the `server / api` and send the response back to the client (front-end). The first index in the response with usally be a link to youtube where just about all movie trailers reside so I am using a condition to specifically only use youtube trailers and if not don't open the trailer. For fun you can add to this condition if you would like to let the trailer open from another video source.
 
 ```ts
 //data.service.ts line 24
 
 trailer(item) {
-    let searchterm = `query=${item}`;
-    try {
-      this.result = this.http.post('/trailer', searchterm, {headers});
-      return this.result;
-    } catch (e) {
-      console.log(e, 'error')
-    }
+  let searchterm = `query=${item}`;
+  try {
+    this.result = this.http.post('/trailer', searchterm, {headers});
+    return this.result;
+  } catch (e) {
+    console.log(e, 'error')
   }
+}
 
 ```
 
@@ -664,11 +666,11 @@ methods.trailer = async (id: string, apiKey: string) => {
 
 ```
 
-I am using this TMDb endpoint `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${apiKey}&language=en-US` to get the movie trailer by movie `id`. The `id` and `apikey` are passed into the endpoint using typescript brackets and backticks which is a new way to add dynamic values with js and it looks much nicer then using a `+` symbol. 
+I am using this TMDb endpoint `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${apiKey}&language=en-US` to get the movie trailer by movie `id`. The `id` and `apikey` are passed into the endpoint using typescript brackets and backticks which is a new way to add dynamic values with js and it looks much nicer then using a `+` to concatenate values. 
 
-If the data meets the youtube condition the diaglog pop-up is opened and the data will show inside the html and the angular interpolated strings `{{selectedMovie.title}}` the double brackets processes the data in the html dynamically.
+If the data meets the youtube condition the diaglog pop-up is opened and the data will show inside the html and the `angular` interpolated strings `{{selectedMovie.title}}`, the double brackets processes the data in the html dynamically.
 
-Something that is not always talked about with projects like this one is that it wouldn't take much time to convert this into a completely different project. You could easily change the endpoints in the `api.ts` file to communicate with a different api and get different data to show in the ui. Of course you would need to change some of the variables naming conventions so that the code makes sense but this project can be recycled with something else that you might be more interested in. See it as a template already set up with a simple backend server and api file to handle any data that you would like to fetch and send back to the front-end for display. Change the header title in `home.html` to something like `Job Search` and connect to a job listing api that can fetch jobs by keywords for example. Once you get started anything is possible. Thank you for coding with me. Good luck. 
+Something that is not always talked about with projects like this one is that it wouldn't take much time to convert this into a completely different project. You could easily change the endpoints in the `api.ts` file to communicate with a different api and get different data to show in the ui. Of course you would need to change some of the variables naming conventions so that the code makes sense but this project can be recycled with something else that you might be more interested in. See it as a template already set up with a simple backend server and api file to handle any data that you would like to fetch and send back to the front-end for display. Change the header title in `home.html` to something like `Job Search` and connect to a job listing api that can fetch jobs by keywords for example. Once you get started anything is possible. Thank you for coding with me. Good luck. [Full source code](https://github.com/iposton/angular-ssr-movie-search)
 
-* Side note: I just found out right this minute there is a `html5` dialog `tag` `<dialog open>This is an open dialog window</dialog>` but it didn't work for me in chrome. It might be a little too new and lacking browser support but perhaps you creative devs out there can find a way to use that instead of my "do it from scratch" approach. 
+<i>Side note:</i> I just found out right this minute there is a `html5` dialog `tag` `<dialog open>This is an open dialog window</dialog>` but it didn't work for me in chrome. It might be a little too new and lacking browser support but perhaps you creative devs out there can find a way to use that instead of my "do it from scratch" approach.
 
