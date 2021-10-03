@@ -108,7 +108,51 @@
       display: none;
     }
 
+    .row.cast {
+      margin-top: 20px;
+      .col-cast {
+        flex: 0 0 50%;
+        text-align: left;
+        font-size: 10px;
+        
+        img {
+          width: 30%;
+          border: 1px solid #fff;
+          border-radius: 8px;
+        }
+        .cast-item {
+          padding-bottom: 5px;
+          display: block;
+        }
+        .dn {
+          display: none;
+        }
+      }
+    }
   } 
+  .modal.full{
+    height: 100%;
+    min-width: 100%;
+    #top {
+      height: 500px;
+      background-size: cover!important;
+      background-repeat: no-repeat!important;
+    }
+    
+    .row .col {
+      flex: 0 0 11%;
+    }
+
+    .content {  
+      .col-trailer {
+        align-self: center;
+        text-align: center;
+      }
+      .col-overview {
+        align-self: center;
+      }
+    }
+  }
 }
 
 @media (max-width: 900px) { 

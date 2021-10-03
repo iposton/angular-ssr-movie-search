@@ -4,20 +4,20 @@
 This [application](https://nhl-starting-goalies-angular.herokuapp.com/) is made with Angular (version 10.0.4). This is a server-side rendering app that uses `node.js` and `express` and it searches for movie titles. This single page app is hosted for free on Heroku (cloud application platform). You will need create a free account with [themoviedb.org](https://www.themoviedb.org/documentation/api?language=en-US) to participate with this tutorial. The instructions of how to procure a TMDB api key are below.
 
 ### Software used in the creation of this app
-* Visual Studio Code 1.38.1
-* iterm2 3.3.12
-* Node.js 14.4.0
-* Angular CLI: 10.0.3
-* NPM 6.14.8
-* Git 2.15.2
+* Visual Studio Code 1.59.1
+* iterm2 3.4.10
+* Node.js 14.17.5
+* Angular CLI: 12.2.8
+* NPM 7.21.1
+* Git 2.30.1
 
 <i>Automatically installed locally by Angular cli</i>
 * rxjs                              6.5.5
-* typescript                        3.9.7
+* typescript                        4.3.5
 * webpack                           4.43.0
 
 ### Initialize a new angular project
-* Install [Angular CLI](https://github.com/angular/angular-cli) version 10.0.3
+* Install [Angular CLI](https://github.com/angular/angular-cli) version 12.2.8
 * Create a new project with Angular Cli `ng new movie-search --skip-git`
 * Angular CLI will ask:
 `Would you like to add Angular routing? Yes` <br>
@@ -673,4 +673,13 @@ If the data meets the youtube condition the diaglog pop-up is opened and the dat
 Something that is not always talked about with projects like this one is that it wouldn't take much time to convert this into a completely different project. You could easily change the endpoints in the `api.ts` file to communicate with a different api and get different data to show in the ui. Of course you would need to change some of the variables naming conventions so that the code makes sense but this project can be recycled with something else that you might be more interested in. See it as a template already set up with a simple backend server and api file to handle any data that you would like to fetch and send back to the front-end for display. Change the header title in `home.html` to something like `Job Search` and connect to a job listing api that can fetch jobs by keywords for example. Once you get started anything is possible. Thank you for coding with me. Good luck. [Full source code](https://github.com/iposton/angular-ssr-movie-search)
 
 <i>Side note:</i> I just found out right this minute there is a `html5` dialog `tag` `<dialog open>This is an open dialog window</dialog>` but it didn't work for me in chrome. It might be a little too new and lacking browser support but perhaps you creative devs out there can find a way to use that instead of my "do it from scratch" approach.
+
+### Part 3
+
+* update backend api calls to fetch movie providers and movie credits
+* refactor search using angular (input)
+* format data after fetched by client add funcs to match providers and credits with movies they belongto
+* style credits (actors) of the movies
+* add funct to display and style the streaming service if the movie has one
+* Make the the trailer modal screen full screen with bg image
 

@@ -15,6 +15,7 @@ export class DialogComponent {
   public isOpen             :boolean;
   @Output() close = new EventEmitter();
 
+
   constructor() { }
 
   public closeModal() {

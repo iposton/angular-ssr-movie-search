@@ -1,5 +1,5 @@
 <div id="overlay" [ngClass]="{'active': isOpen}" (click)="closeModal()">
-  <div class="modal" (click)="$event.stopPropagation()">
+  <div class="modal full" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <span class="header-title" *ngIf="selectedMovie != null">
         {{selectedMovie?.title ? selectedMovie?.title : selectedMovie?.name}} 
@@ -8,7 +8,7 @@
       <span class="right" (click)="closeModal()">X</span>
     </div>
     <div class="content"> 
-      <div id="top" class="row">
+      <div id="top" class="row" *ngIf="isOpen" [ngStyle]="{'background': 'linear-gradient(-225deg, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.6) 80%), url(https://image.tmdb.org/t/p/w533_and_h300_bestv2/'+ selectedMovie?.backdrop_path +')' }">
         <div *ngIf="trailerUrl != null" class="col-trailer">
           <iframe [src]="trailerUrl" width="560" height="315" frameborder="0" allowfullscreen></iframe>  
         </div>
@@ -22,6 +22,14 @@
           <br>
           <hr>
           <span>{{selectedMovie?.overview}} </span> <br>  
+          <span class="row cast" *ngIf="selectedMovie?.credits">
+            <span class="col-cast" *ngFor="let actor of selectedMovie?.credits?.cast; let i = index"> 
+              <span [ngClass]="{'dn': i > 3 || actor?.profile_path == null, 'cast-item':  i &lt;= 3 && actor?.profile_path != null}">
+                  <img src="https://image.tmdb.org/t/p/w276_and_h350_face{{actor?.profile_path}}" alt="image of {{actor?.name}}"> <br>
+                  {{actor?.name}} <br> ({{actor?.character}})
+              </span>
+            </span>
+          </span>
         </div>
       </div>     
     </div>  
