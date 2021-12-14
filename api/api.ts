@@ -12,7 +12,7 @@ import { forkJoin } from 'rxjs'
 
 methods.search = async (term: string, apiKey: string) => {
   let type = 'movie'
-  let searchQuery = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&page=1&include_adult=false&query=${term}`;
+  let searchQuery = `https://api.themoviedb.org/3/search/${type}?api_key=${apiKey}&language=en-US&page=1&include_adult=false&query=${term}`;
   let searchPromise = new Promise((resolve, reject) => {
     request(searchQuery, {}, function(err, res, body) {
       let mvProviders = []

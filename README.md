@@ -94,7 +94,7 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 ```
 
 
-* Create a search input with `FormControl in `home.component.html`.
+* Create a search input with `FormControl` in `home.component.html`.
 * Set up an `async Observable` and a `function` to fire onInit.
 
 ```html
@@ -674,12 +674,229 @@ Something that is not always talked about with projects like this one is that it
 
 <i>Side note:</i> I just found out right this minute there is a `html5` dialog `tag` `<dialog open>This is an open dialog window</dialog>` but it didn't work for me in chrome. It might be a little too new and lacking browser support but perhaps you creative devs out there can find a way to use that instead of my "do it from scratch" approach.
 
-### Part 3
+# Part 3
 
-* update backend api calls to fetch movie providers and movie credits
-* refactor search using angular (input)
-* format data after fetched by client add funcs to match providers and credits with movies they belongto
-* style credits (actors) of the movies
+### Update to Fetch Movie Providers and Credits 
+The TMDB api recently added a new end point to their api that will tell you where a movie is streaming by using a movie's id. I also added another endpoint to fetch the cast of the movies in the search payload. I updated the `api.ts` file to handle these new requests.
+
+After getting the search results I use the rxjs `forkJoin` method and `map` to make multiple requests for `providers` for each movie by `id`. The provider data is `pushed` to the `mvProvider` array and then that is added to the `searchInfo` object which is then sent back to the client with movie results array, providers array and credits array.
+
+Depending on the amount of search results a single search request could generate up to 30 api requests before the data is resolved and sent to the client. I created a `sleep` function to `await` all the requests to finish before a `resolve` sends imcomplete data back to the front-end. It's not the best way to handle this but it works. Using `async` and `await` is important to make sure all the data being fetched completes before the `promise` is `resolved`.
+
+```ts
+//api.ts
+let request = require('request')
+let methods: any = {}
+let searchInfo = [
+  {
+    results: [],
+    providers: [],
+    credits: []
+  }
+]
+import { forkJoin } from 'rxjs'
+
+methods.search = async (term: string, apiKey: string) => {
+  let type = 'movie'
+  let searchQuery = `https://api.themoviedb.org/3/search/${type}?api_key=${apiKey}&language=en-US&page=1&include_adult=false&query=${term}`
+
+  let searchPromise = new Promise((resolve, reject) => {
+    request(searchQuery, {}, function(err, res, body) {
+
+      let mvProviders = []
+      let mvCredits = []
+      const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+      let data = JSON.parse(body)
+      searchInfo[0]['results'] = data['results']
+
+      const providers = async() => {
+        forkJoin(
+          data['results'].map( m =>
+            request(
+              `https://api.themoviedb.org/3/${type}/${m.id}/watch/providers?api_key=${apiKey}`,
+              {},
+              async function(err, res, body) {
+                let data = await JSON.parse(body);
+                mvProviders.push(data);
+                if (mvProviders.length > 1) {
+                  return searchInfo[0]['providers'] = mvProviders;
+                }
+              }
+            )
+          )
+        )  
+      }
+
+      const credits = async() => {
+        await providers()
+        
+        forkJoin(
+          data['results'].map( m =>
+            request(
+              `https://api.themoviedb.org/3/${type}/${m.id}/credits?api_key=${apiKey}&language=en-US`,
+              {},
+              async function(err, res, body) {
+                let data = await JSON.parse(body);
+                mvCredits.push(data);
+                if (mvCredits.length > 1) {
+                  searchInfo[0]['credits'] = mvCredits;         
+                }
+              }
+            )
+          )
+        );
+        await sleep(1500);
+        resolve('done');
+      }
+      credits() 
+    });
+  });
+  let result = await searchPromise;
+  return searchInfo;
+}
+
+export const api = {data: methods};
+
+```
+
+### Refactor Search Using Angular event binding
+I had to refactor the search method from the pevious tutorials because it was blocking me from adding more related movie data to the array before presenting it in the `home.component.html` file.
+
+In the `html` file I can use `Angular` event binding `(input)` to listen for an event change and call a function passing in the event which contains the search text.
+
+I can pass the search text to the `api.ts` file append it to the `api endpoint` and `request` the data.
+
+If the `req` (request) is successful the payload res (response) is sent back to the client (front-end) and I can format the data with logic inside the `home.component.ts` (controller). I created an `array` called `results` to define the formatted data to so that the actors and streaming service will show in the ui.
+
+```html
+<!-- home.component.html -->
+
+<div class="row">
+  <input (input)="doSearch($event)" type="search" class="form-control" placeholder="search">
+  <span class="search-title">{{ results?.length ? 'Results' : 'Search' }}</span>
+</div>
+
+```
+
+```ts
+// home.component.ts
+...
+
+ngOnInit(): void {
+  }
+
+  public doSearch(e) {
+
+    if (e.target.value.length > 2) {
+      this.dataService.search(e.target.value).pipe(
+        debounceTime(400)).subscribe(res => {
+          this.format(res)
+      })
+    }
+
+    if (e.target.value.length == 0) {
+      this.results = []
+      this.selectedMovie = null 
+    }
+
+  }
+
+  public format(data) {
+    this.util.relatedInfo(data[0].results, data[0].providers, 'providers', 'movies')
+    this.util.relatedInfo(data[0].results, data[0].credits, 'credits', 'movies')
+    this.loading = false
+    this.results = data[0].results
+    console.log(this.results, 'res')
+  }
+
+  ...
+```
+
+Go to full `home.component.ts` file.
+
+### Format Data 
+I need to format the data to match `providers` and `credits` with movies they belong to by id. I created a utility `service` to handle the formatting. By using the command `ng g s services/util` I can generate a service file with `Angular cli`. The functions in a `service` can be used by all `components` of an angular app by importing the `service` into the `component` controller. Now I can call the `relatedInfo` function in `home.component.ts`.
+
+```ts
+//util.service.ts
+public relatedInfo(items, extras, type: string, itemType: string) {
+    for (let item of items) {
+      for (let e of extras) {
+       
+        if (item.id === e.id) {     
+          
+          if (type === 'credits') {
+
+            item.credits = e;
+            item.type = itemType;
+            if (e.cast[0] != null) {
+              item.credit1 = e.cast[0]['name'];
+              item.credit1Pic = e.cast[0]['profile_path'];
+              item.credit1Char = e.cast[0]['character'];
+            }
+
+            if (e.cast[1] != null) {
+              item.credit2 = e.cast[1]['name'];
+              item.credit2Pic = e.cast[1]['profile_path'];
+              item.credit2Char = e.cast[1]['character'];
+            }
+          }
+
+          if (type === 'providers') {
+            item.provider = e['results'].US != null ? e['results'].US : 'unknown';
+          }   
+    
+        }
+      }
+    }
+    return items;
+}
+```
+
+
+### Style Credits of The Movies
+I need to show the credits in the search view and the trailer view. Since the html is already set up for the `results` array there are a few adjustments I need to make in `home.component.html` and `dialog.component.html` to show the movie's acting credits.
+
+```html
+<!-- home.component.html line 21 -->
+...
+
+ <span class="info">
+  <p>
+    <span *ngIf="item?.credit1">Cast: {{item?.credit1}}, {{item?.credit2}} <br></span>
+    <span class="star-rating" *ngFor="let star of rating(item)"> <span>☆</span> </span><br>
+    <span class="trailer-link" (click)="openTrailer(item)">Trailer</span>
+  </p> 
+ </span>
+
+...
+```
+
+```html
+<!-- dialog.component.html line 24 -->
+...
+
+ <span>{{selectedMovie?.overview}} </span> <br>  
+ <span class="row cast" *ngIf="selectedMovie?.credits">
+  <span class="col-cast" *ngFor="let actor of selectedMovie?.credits?.cast; let i = index"> 
+    <span [ngClass]="{'dn': i > 3 || actor?.profile_path == null, 'cast-item':  i &lt;= 3 && actor?.profile_path != null}">
+        <img src="https://image.tmdb.org/t/p/w276_and_h350_face{{actor?.profile_path}}" alt="image of {{actor?.name}}"> <br>
+        {{actor?.name}} <br> ({{actor?.character}})
+    </span>
+  </span>
+ </span>
+
+...
+```
+
+I added some new css styles to handle this new data.
+
+```scss
+
+
+```
+
+
 * add funct to display and style the streaming service if the movie has one
 * Make the the trailer modal screen full screen with bg image
 

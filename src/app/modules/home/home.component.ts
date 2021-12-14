@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from "@angular/forms";
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { DataService } from '../../services/data.service';
 import { UtilService } from '../../services/util.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -25,36 +24,27 @@ export class HomeComponent implements OnInit {
     private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
-    // this.searchField = new FormControl();
-    // // this.results = this.searchField.valueChanges.pipe(
-    // //   debounceTime(400),
-    // //   distinctUntilChanged(),
-    // //   tap(_ => { 
-    // //     this.loading = true; 
-    // //   }),
-    // //   switchMap(term => this.dataService.search(term)),
-    // //   tap(_ => (this.loading = false))
-    // // );
   }
 
   public doSearch(e) {
+
     if (e.target.value.length > 2) {
       this.dataService.search(e.target.value).pipe(
         debounceTime(400)).subscribe(res => {
-        this.format(res)
+          this.format(res)
       })
     }
+
     if (e.target.value.length == 0) {
       this.results = []
       this.selectedMovie = null 
-      // this.trailerUrl = null
-      // this.showTrailer = false
     }
+
   }
 
   public format(data) {
-    this.util.relatedInfo(data[0].results, data[0].providers, 'providers', 'movies', '', 0)
-    this.util.relatedInfo(data[0].results, data[0].credits, 'credits', 'movies', '', 0)
+    this.util.relatedInfo(data[0].results, data[0].providers, 'providers', 'movies')
+    this.util.relatedInfo(data[0].results, data[0].credits, 'credits', 'movies')
     this.loading = false
     this.results = data[0].results
     console.log(this.results, 'res')
