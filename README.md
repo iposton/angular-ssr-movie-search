@@ -1,7 +1,7 @@
-# Angular 10 Movie Search (ssr ngUniversal), TMDB API - <a href="https://angular10-movie-search.herokuapp.com/" target="_blank">Demo</a>
+# Angular 12 Movie Search (ssr ngUniversal), TMDB API - <a href="https://angular10-movie-search.herokuapp.com/" target="_blank">Demo</a>
 
 ### Description
-This [application](https://nhl-starting-goalies-angular.herokuapp.com/) is made with Angular (version 10.0.4). This is a server-side rendering app that uses `node.js` and `express` and it searches for movie titles. This single page app is hosted for free on Heroku (cloud application platform). You will need create a free account with [themoviedb.org](https://www.themoviedb.org/documentation/api?language=en-US) to participate with this tutorial. The instructions of how to procure a TMDB api key are below.
+This [application](https://nhl-starting-goalies-angular.herokuapp.com/) is made with Angular (version 12.2.8). This is a server-side rendering app that uses `node.js` and `express` and it searches for movie titles. This single page app is hosted for free on Heroku (cloud application platform). You will need create a free account with [themoviedb.org](https://www.themoviedb.org/documentation/api?language=en-US) to participate with this tutorial. The instructions of how to procure a TMDB api key are below.
 
 ### Software used in the creation of this app
 * Visual Studio Code 1.59.1
@@ -812,7 +812,7 @@ ngOnInit(): void {
   ...
 ```
 
-Go to full `home.component.ts` file.
+[Go to full `home.component.ts` file.](https://github.com/iposton/angular-ssr-movie-search/blob/master/src/app/modules/home/home.component.ts)
 
 ### Format Data 
 I need to format the data to match `providers` and `credits` with movies they belong to by id. I created a utility `service` to handle the formatting. By using the command `ng g s services/util` I can generate a service file with `Angular cli`. The functions in a `service` can be used by all `components` of an angular app by importing the `service` into the `component` controller. Now I can call the `relatedInfo` function in `home.component.ts`.
@@ -892,11 +892,173 @@ I need to show the credits in the search view and the trailer view. Since the ht
 I added some new css styles to handle this new data.
 
 ```scss
+/* dialog.component.scss line 111 */
+...
 
+.row.cast {
+  margin-top: 20px;
+  .col-cast {
+    flex: 0 0 50%;
+    text-align: left;
+    font-size: 10px;
+    
+    img {
+      width: 30%;
+      border: 1px solid #fff;
+      border-radius: 8px;
+    }
+    .cast-item {
+      padding-bottom: 5px;
+      display: block;
+    }
+    .dn {
+      display: none;
+    }
+  }
+}
+
+...
+```
+
+[Full `dialog.component.scss` here.](https://github.com/iposton/angular-ssr-movie-search/blob/master/src/app/components/dialog/dialog.component.scss)
+
+
+### Display Streaming Provider
+To display the streaming service of each movie in the returned array of movies I use a `function` called `getProvider`. This function will take one argument and for each loop through the provider data and define a short `string` to fit in the display. Some provider titles are too large for the ui and need to be changed using `if / else` conditonals.
+
+```html
+<!-- home.component.html line 28 -->
+
+<span *ngIf="item?.provider != null" class="{{getProvider(item?.provider)}} probar">
+  {{getProvider(item?.provider)}}
+</span>
 
 ```
 
+```ts
+// home.component.ts line 75
+...
 
-* add funct to display and style the streaming service if the movie has one
-* Make the the trailer modal screen full screen with bg image
+public getProvider(pro) {
+  try {
+    if (pro === 'unknown') {
+      return ''
+    } else if (pro['flatrate'] != null) {
+      if (pro.flatrate[0].provider_name === 'Amazon Prime Video') {
+        return 'prime'
+      } else if (pro.flatrate[0].provider_name.toUpperCase() === 'IMDB TV AMAZON CHANNEL') {
+        return 'imdb tv'
+      } else if (pro.flatrate[0].provider_name.toUpperCase() === 'APPLE TV PLUS') {
+        return 'apple tv'
+      } else {
+        return pro.flatrate[0].provider_name.toLowerCase()
+      } 
+    } else if (pro['buy'] != null) {
+      return ''
+    } else if (pro['rent'] != null) {
+      return ''
+    } else {
+      return ''
+    }
+  } catch(e) {
+    console.log(e, 'error')
+  }
+}
+
+...
+```
+
+Now using the probar `class` I can style the streaming service provider. I can also use the provider name in the html class by using angular interpolation curly brackets to add a dynamic background color to the probar style.
+
+```scss
+/* styles.scss line 58 */
+...
+
+.probar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  opacity: 0.8;
+  color: #fff;
+  text-transform: uppercase;
+  background: #555;
+}
+
+.netflix {
+  background: #e00713;  
+}
+
+.hbo {
+  background: #8440C1;
+}
+
+.prime {
+  background: #00A3DB;
+}
+
+.hulu {
+  background:  #1DE883;
+}
+
+.disney {
+  background:  #111D4E;
+}
+
+.apple {
+  background:  #000;
+}
+
+...
+```
+
+### Full Screen Trailer Modal
+I decide to make the trailer modal the full width of the screen and add a background image of the selected movie. I updated `dialog.component.html` by using the Angular `[ngStyle]` directive to handle the movie background image. I added a class named `full` to the `modal` class then I added new styles to the active `modal.full` class.
+
+```html
+<!-- dialog.component.html line 11 -->
+...
+
+<div id="top" class="row" *ngIf="isOpen" [ngStyle]="{'background': 'linear-gradient(-225deg, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.6) 80%), url(https://image.tmdb.org/t/p/w533_and_h300_bestv2/'+ selectedMovie?.backdrop_path +')' }">
+
+...
+```
+
+```scss
+/* dialog.component.scss line 133 */
+...
+
+ .modal.full{
+    height: 100%;
+    min-width: 100%;
+    #top {
+      height: 500px;
+      background-size: cover!important;
+      background-repeat: no-repeat!important;
+    }
+    
+    .row .col {
+      flex: 0 0 11%;
+    }
+
+    .content {  
+      .col-trailer {
+        align-self: center;
+        text-align: center;
+      }
+      .col-overview {
+        align-self: center;
+      }
+    }
+  }
+
+  ...
+```
+
+This is a cool feature that I use often to find where a movie is streaming and the search responds quickly, faster than a google search I think.
+
+A fun challenge for advanced developers out there reading this would be if you could refactor the `api.ts` code. I am using nested `Promises` to wait for a `resolve` before sending the movie data back to the client. However I don't like the way I had to use a `sleep` `await`  timer function so that the data would wait for the `credit` and `provider` data to reslolve before the movie data got sent back to the `client`. I shouldn't have to use the `sleep` `function` that was just a patch to help me out. The problem was I created too many scopes and the resolves were not working the way that I wanted them to. If someone can get the resolves to work without using the `sleep` timer `function` I would be very impressed. Thank you for reading!
 
